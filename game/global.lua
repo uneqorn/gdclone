@@ -1,10 +1,5 @@
 global = {}
 
-function global.sleep(s)
-  local ntime = os.time() + s
-  repeat until os.time() > ntime
-end
-
 function global.fileExists(file)
   return os.rename(file,file)
 end
@@ -17,10 +12,5 @@ function global.scandir(directory)
     end
     return t
 end
-
-global.Blocks = {}
-global.Spikes = {}
-global.mode = "menu"
-global.selectedLevel = 1
 
 return global
