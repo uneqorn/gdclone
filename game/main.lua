@@ -20,7 +20,6 @@ local line = {x=50}
 local jumpstate = 0
 local rotation = 0
 local showFps = false
-local music = false
 
 function love.load()
   love.mouse.setVisible(false)
