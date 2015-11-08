@@ -7,7 +7,10 @@ So, this is divided in two different programs; the game and the level editor.
 You can load and play any level which is in the folder "levels". Later I'll explain how levels are saved and loaded.
 
 Press/hold space or left click to jump.
-Escape to exit.
+
+Press f to show fps.
+
+Press escape to exit.
 ![](https://i.imgur.com/kjj07d1.png)
 ![](https://i.imgur.com/Mei8JYZ.png)
 
@@ -15,9 +18,13 @@ Escape to exit.
 Lets you load any level inside the "levels" folder and edit it, currently the only objects available are blocks and spikes.
 
 Left click to place selected object.
+
 Right click to destroy object.
+
 Scroll up/down to change object.
+
 Press s to save level.
+
 Press escape to exit.
 ![](https://i.imgur.com/PI43TxP.png)
 ![](https://i.imgur.com/AzzSm5Q.png)
