@@ -54,8 +54,9 @@ function love.update(dt)
       mode = "menu"
       lg.setBackgroundColor(100,100,255)
       SelectedLevel = 1
-      camera:setPosition(500,500)
+      camera:setPosition(0,0)
       line.x = 50
+      return
     end
 
     if love.keyboard.isDown(" ") or love.mouse.isDown("l") then --Handle jumping
