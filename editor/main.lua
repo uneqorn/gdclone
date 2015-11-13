@@ -6,6 +6,7 @@ require "global"
 require "readlevel"
 require "spike"
 require "writelevel"
+require "utf8"
 
 --Define constants
 LEVELDIR = love.filesystem.getSourceBaseDirectory().."/levels"
@@ -28,12 +29,14 @@ local Spikes = {} --Table that holds spike opjects
 local mouse = {} --Create mouse object
 camera.x, camera.y = 0, 0
 local selectedBlock = {img = lg.newImage("assets/block.png"), name = "cube"}
+local typing, typingText = false, ""
 
 function love.load()
   print("LEVELDIR: ", LEVELDIR)
   lg.setFont(font) --Set default font
   lg.setBackgroundColor(255,50,50) --Set backgroundColor to blue
   math.randomseed(os.time()) --Set random seed
+  love.keyboard.setKeyRepeat(true)
 end
 
 function love.update(dt)
@@ -88,15 +91,47 @@ function love.draw()
     lg.print("<  SELECT LEVEL  >", width/2-150, height/2-75)
     lg.print(levels[selectedLevel], width/2-75, height/2-25)
     lg.print("[PRESS ENTER]", width/2-130, height/2+25)
+    if typing then
+      lg.setColor(255,255,255)
+      lg.print("Type the name of the new file: ", width/4, height/2-30)
+      lg.rectangle("fill", width/4, height/2, #typingText*18, 30)
+      lg.setColor(0,0,0)
+      lg.printf(typingText, width/4+5, height/2+5, width)
+    end
     -- print(levels[selectedLevel])
   end
   camera:unset()
 end
 
+function love.textinput(ch)
+  if not typingN then
+    typingN = true
+    return
+  elseif typing and ch ~= " " then
+    typingText = typingText..ch
+    return
+  end
+end
+
 function love.keypressed(k)
   if mode == "menu" then
     local level = levels[selectedLevel]
-    if k == "right" and levels[selectedLevel+1] ~= nil then
+    if typing then
+      if k == "backspace" then
+        typingText = typingText:sub(1, #typingText-1)
+      elseif k == "escape" then --exit
+        typing = false
+        typingText = ""
+      elseif k == "return" then
+        typing = false
+        os.execute("mkdir '"..LEVELDIR.."'/"..typingText)
+        print("creating dir "..LEVELDIR.."/"..typingText)
+        levels = global.scandir(LEVELDIR)
+      end
+    elseif k == "n" then
+      typingN = false
+      typing = true
+    elseif k == "right" and levels[selectedLevel+1] ~= nil then
       selectedLevel = selectedLevel + 1
     elseif k == "left" and levels[selectedLevel-1] ~= nil then
       selectedLevel = selectedLevel - 1

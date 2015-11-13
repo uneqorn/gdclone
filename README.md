@@ -25,6 +25,8 @@ Scroll up/down to change object.
 
 Press s to save level.
 
+Press n to create a new level.
+
 Press escape to exit.
 ![](https://i.imgur.com/PI43TxP.png)
 ![](https://i.imgur.com/AzzSm5Q.png)
