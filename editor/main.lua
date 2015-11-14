@@ -107,7 +107,7 @@ function love.textinput(ch)
   if not typingN then
     typingN = true
     return
-  elseif typing and ch ~= " " then
+  elseif typing and ch ~= " " and ch ~= ";" then
     typingText = typingText..ch
     return
   end
