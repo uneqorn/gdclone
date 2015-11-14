@@ -17,6 +17,10 @@ function global.scandir(directory)
           t[i] = filename
       end
     end
+    if t[1] == nil then --Levels folder doesn't exist or it's empty
+      os.execute("mkdir levels")
+      os.execute("mkdir levels/placeholder")
+    end
     return t
 end
 
