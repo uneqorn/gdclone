@@ -22,9 +22,11 @@ local font = lg.newFont("assets/font.ttf", 20)
 local banner = lg.newImage("assets/banner.png")
 --Some other things
 local line = {x=50}
+local yFov = {}
 local jumpstate = 0
 local rotation = 0
 local showFps = false
+local dead = false
 
 function love.load()
   love.mouse.setVisible(false)
@@ -39,13 +41,23 @@ function love.load()
   player.attempts = 1
   player.speed = 600
   player.img = lg.newImage("assets/player.png")
+  yFov.min = player.y-200
+  yFov.max = player.y+200
 end
 
 function love.update(dt)
   if mode == "play" then --If not in menu
+    if dead then
+      if love.timer.getTime() > maxTime then
+        dead = false
+        line.x = 50
+        camera:setY(player.y-height/2)
+      end
+      return
+    end
     player.x = player.x + player.speed * dt --Move player
     player.y = player.y - jumpstate --Jumping animation
-    jumpstate = jumpstate / 1.5
+    jumpstate = jumpstate / 1.2
     line.x = line.x+player.speed*dt --Move line
 
     if player.x >= levelEnd then --Check if player is in the end of the level
@@ -61,7 +73,7 @@ function love.update(dt)
 
     if love.keyboard.isDown(" ") or love.mouse.isDown("l") then --Handle jumping
       if onGround then
-        jumpstate = 50
+        jumpstate = 30
       end
     end
 
@@ -73,24 +85,35 @@ function love.update(dt)
     end
     if rotate then
       rotation = rotation+0.13
-      if rotation > 100 then rotation = 0 end --To avoid overflowing
+      if rotation > 100 then rotation = 0 end
     end
 
     player.y = physics.fall(dt, player.x, player.y, 48, 48) --Fall
     for k,v in pairs(Blocks) do --Check collision with blocks
       if physics.collision(player.x,player.y,player.img:getWidth()/2,player.img:getHeight(), v.x,v.y+20,v.img:getWidth(),v.img:getHeight()-20) then
         player.die(1)
-        line.x = 50
+        dead = true
+        maxTime = love.timer.getTime()+1
+        return
       end
     end
 
     for k,v in pairs(Spikes) do --Check collision with spikes
       if physics.collision(player.x,player.y,player.img:getWidth()/2,player.img:getHeight(), v.x+15,v.y+10,v.img:getWidth()-15,v.img:getHeight()-20) then
         player.die(1)
-        line.x = 50
+        dead = true
+        maxTime = love.timer.getTime()+1
+        return
       end
     end
-  camera:setPosition(player.x+350 - width / 2, player.y - height / 2) --Scroll
+  if player.y > yFov.max then
+    camera:setY(player.y-height/2)
+    yFov.max = player.y+200
+  elseif player.y < yFov.min then
+    camera:setY(player.y-height/2)
+    yFov.max = player.y-200
+  end
+  camera:setX(player.x+350 - width / 2) --Scroll
   end
 end
 
@@ -111,9 +134,9 @@ function love.draw()
     end
 
     lg.setColor(0,0,75) --Draw line
-    lg.rectangle("fill", line.x,148 ,line.x+width,300)
+    lg.rectangle("fill", line.x-10,148 ,line.x+width,300)
     lg.setColor(200,200,255)
-    lg.rectangle("fill", line.x,148,line.x+width,1)
+    lg.rectangle("fill", line.x-10,148,line.x+width,1)
 
 
     if showFps then --Show frames per second if user has pressed 'f'
@@ -147,6 +170,7 @@ function love.keypressed(k)
       createSpikes(readlevel(LEVELDIR.."/"..level.."/spikes.txt"))
       levelEnd = getEnd(Blocks, Spikes)
       print("levelEnd:", levelEnd)
+      camera:setY(player.y-height/2)
     end
   end
   if k == "escape" then --Quit game

@@ -1,13 +1,15 @@
 #!/bin/sh
 
 cd editor
-love-release
+love-release -W32
 mv releases/.love ../editor.love
-rm -d releases
+mv releases/love-0.9.2-win32/.exe ../editor.exe
+rm -r releases
 cd ..
 
 cd game
-love-release
+love-release -W32
 mv releases/.love ../game.love
-rm -d releases
+mv releases/love-0.9.2-win32/.exe ../game.exe
+rm -r releases
 cd ..
